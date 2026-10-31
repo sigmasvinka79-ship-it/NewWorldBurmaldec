@@ -9,7 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: unzip -o project.zip -d mod
+        with:
+          fetch-depth: 0
+      - name: Unpack newest zip
+        run: |
+          newest=$(for f in *.zip; do echo "$(git log -1 --format=%ct -- "$f") $f"; done | sort -n | tail -1 | cut -d' ' -f2-)
+          echo "Using: $newest"
+          unzip -o "$newest" -d mod
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
